@@ -57,9 +57,9 @@ describe('handleRequest', () => {
     expect(MOCK_SHOULD_RESPONSE_BE_CACHED).toHaveBeenCalledTimes(1)
   })
 
-  it('should use `cache.shouldResponseBeCached`', async () => {
+  it('should use `cache.get`', async () => {
     await executeHandleRequest()
-    expect(MOCK_SHOULD_RESPONSE_BE_CACHED).toHaveBeenCalledTimes(1)
+    expect(MOCK_CACHE_GETTER).toHaveBeenCalledTimes(1)
   })
 
   it('should return the cached response if any', async () => {
@@ -68,6 +68,9 @@ describe('handleRequest', () => {
     await executeHandleRequest()
     expect(MOCK_REPLY).toHaveBeenCalledTimes(1)
     expect(MOCK_REPLY).toHaveBeenCalledWith(MOCK_CACHED_RESPONSE)
+    expect(MOCK_FORWARD).not.toHaveBeenCalled()
+    expect(MOCK_SHOULD_RESPONSE_BE_CACHED).not.toHaveBeenCalled()
+    expect(MOCK_CACHE_SETTER).not.toHaveBeenCalled()
   })
 
   it('should not set the cache if `shouldResponseBeCached` returns false', async () => {
