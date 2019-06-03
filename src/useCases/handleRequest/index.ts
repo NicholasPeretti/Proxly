@@ -1,9 +1,10 @@
 import ProxyRequest from '../../entities/ProxyRequest'
 import Middleware from '../../entities/Middleware'
 import Cache from '../../entities/Cache'
+import replyWithError from '../replyWithError'
 
-type Forward = (request: ProxyRequest) => Promise<ProxyRequest>
-type Reply = (response: ProxyRequest) => void
+export type Forward = (request: ProxyRequest) => Promise<ProxyRequest>
+export type Reply = (response: ProxyRequest) => void
 
 export default async function handleRequest(
   request: ProxyRequest,
@@ -19,7 +20,13 @@ export default async function handleRequest(
     return reply(cachedResponse)
   }
 
-  const response = await forward(request)
+  let response = null
+  try {
+    response = await forward(request)
+  } catch (e) {
+    console.error('An error occurred while forwarding the request', e)
+    return replyWithError(reply, e)
+  }
 
   if (middleware.shouldResponseBeCached(response)) {
     cache.set(requestKey, response)
@@ -27,3 +34,11 @@ export default async function handleRequest(
 
   return reply(response)
 }
+
+/**
+ * In here we should just perform a switch case to decide which usecase to run
+ * We also should create a usecase for each "mode" of the proxy:
+ * - cache only
+ * - prioritize cache
+ * - prioritize network
+ */
