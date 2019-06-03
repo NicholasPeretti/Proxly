@@ -30,7 +30,7 @@ describe('ProxyRequest', () => {
       })
 
       it('should return the passed body', () => {
-        const MOCK_BODY = { MOCK_BODY: 'MOCK_BODY' }
+        const MOCK_BODY = 'MOCK_BODY'
         request = new ProxyRequest({ body: MOCK_BODY })
         expect(request.getBody()).toBe(MOCK_BODY)
       })
@@ -54,7 +54,7 @@ describe('ProxyRequest', () => {
       })
 
       it('should return the passed body', () => {
-        const MOCK_BODY = { MOCK_BODY: 'MOCK_BODY' }
+        const MOCK_BODY = 'MOCK_BODY'
         request = new ProxyRequest({ body: MOCK_BODY })
         expect(request.getTargetBody()).toBe(MOCK_BODY)
       })
@@ -107,12 +107,9 @@ describe('ProxyRequest', () => {
         expect(typeof request.setTargetBody).toBe('function')
       })
       it('should set the target headers in an immutable way', () => {
-        const NEW_TARGET_BODY = {
-          testkey: 'testvalue'
-        }
+        const NEW_TARGET_BODY = 'NEW_TARGET_BODY'
         request.setTargetBody(NEW_TARGET_BODY)
         expect(request.getTargetBody()).toEqual(NEW_TARGET_BODY)
-        expect(request.getTargetBody()).not.toBe(NEW_TARGET_BODY)
       })
     })
 

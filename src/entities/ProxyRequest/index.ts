@@ -15,25 +15,30 @@ class ProxyRequest {
   //  Incoming request properties
   private method: HTTP_METHOD
   private url: string
-  private body: object
+  private body: string
   private headers: object
 
   //  Forwarding request properties
   private target_url: string
-  private target_body: object
+  private target_body: string
   private target_headers: object
 
   constructor(config?: {
     url?: string
-    body?: object
+    body?: string | object
     headers?: object
     method?: HTTP_METHOD
   }) {
     config = config || {}
 
+    if (typeof config.body === 'string') {
+      this.body = config.body
+    } else {
+      this.body = JSON.stringify(config.body)
+    }
+
     this.method = config.method || HTTP_METHOD.GET
     this.url = config.url
-    this.body = config.body
     this.headers = config.headers || {}
 
     this.target_url = this.url
@@ -50,7 +55,7 @@ class ProxyRequest {
     return this.method
   }
 
-  getBody(): object {
+  getBody(): string {
     return this.body
   }
 
@@ -63,7 +68,7 @@ class ProxyRequest {
     return this.target_url
   }
 
-  getTargetBody(): object {
+  getTargetBody(): string {
     return this.target_body
   }
 
@@ -76,8 +81,8 @@ class ProxyRequest {
     this.target_url = url
   }
 
-  setTargetBody(body: object): void {
-    this.target_body = { ...body }
+  setTargetBody(body: string): void {
+    this.target_body = body
   }
 
   setTargetHeaders(headers: object): void {
