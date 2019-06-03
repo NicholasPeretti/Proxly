@@ -18,6 +18,7 @@ export default function handleRequestController(
     headers: request.headers,
     body: request.body
   })
+  proxyRequest.setTargetUrl(process.env.TARGET_URL)
 
   const middleware = getMatchingMiddleware(proxyRequest, middlewares)
 
