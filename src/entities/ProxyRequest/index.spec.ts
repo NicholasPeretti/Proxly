@@ -12,6 +12,21 @@ describe('ProxyRequest', () => {
       request = new ProxyRequest({})
     })
 
+    describe('Request.getValidHeaders', () => {
+      const INVALID_HEADERS = ['host', 'accept-encoding']
+
+      INVALID_HEADERS.forEach(header => {
+        it(`should omit the '${header}' header`, () => {
+          const MOCK_HEADERS = {
+            [header]: 'MOCK_HOST'
+          }
+          request = new ProxyRequest({ headers: MOCK_HEADERS })
+          const safeHeaders = request.getHeaders()
+          expect(safeHeaders[header]).toBeUndefined()
+        })
+      })
+    })
+
     describe('Request.getUrl', () => {
       it('should be a function', () => {
         expect(typeof request.getUrl).toBe('function')
@@ -70,7 +85,7 @@ describe('ProxyRequest', () => {
       it('should return the passed headers object if set', () => {
         const MOCK_HEADERS = {}
         request = new ProxyRequest({ headers: MOCK_HEADERS })
-        expect(request.getHeaders()).toBe(MOCK_HEADERS)
+        expect(request.getHeaders()).toEqual(MOCK_HEADERS)
       })
     })
 
@@ -84,7 +99,7 @@ describe('ProxyRequest', () => {
       it('should return the passed headers object if set', () => {
         const MOCK_HEADERS = {}
         request = new ProxyRequest({ headers: MOCK_HEADERS })
-        expect(request.getTargetHeaders()).toBe(MOCK_HEADERS)
+        expect(request.getTargetHeaders()).toEqual(MOCK_HEADERS)
       })
     })
 

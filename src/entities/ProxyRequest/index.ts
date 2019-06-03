@@ -39,11 +39,24 @@ class ProxyRequest {
 
     this.method = config.method || HTTP_METHOD.GET
     this.url = config.url
-    this.headers = config.headers || {}
+    this.headers = this.getValidHeaders(config.headers)
 
     this.target_url = this.url
     this.target_body = this.body
     this.target_headers = this.headers
+  }
+
+  getValidHeaders(headers = {}) {
+    const INVAILD_HEADERS = ['host', 'accept-encoding']
+    const validHeaders = {}
+
+    for (var header in headers) {
+      if (INVAILD_HEADERS.indexOf(header) < 0) {
+        validHeaders[header] = headers[header]
+      }
+    }
+
+    return validHeaders
   }
 
   //  Request getters
