@@ -18,7 +18,8 @@ export default function handleRequestController(
     headers: request.headers,
     body: request.body
   })
-  proxyRequest.setTargetUrl(process.env.TARGET_URL)
+  const targetUrl = process.env.TARGET_HOST + proxyRequest.getUrl()
+  proxyRequest.setTargetUrl(targetUrl)
 
   const middleware = getMatchingMiddleware(proxyRequest, middlewares)
 
@@ -34,6 +35,6 @@ export default function handleRequestController(
       }
     }
 
-    return response.end(req.getBody())
+    return response.send(req.getBody()).end()
   })
 }
