@@ -2,6 +2,7 @@ import handleRequest from './index'
 import ProxyRequest from '../../entities/ProxyRequest'
 import Middleware from '../../entities/Middleware'
 import Cache from '../../entities/Cache'
+import Configuration from '../../entities/Configuration'
 
 const MOCK_REQUEST = new ProxyRequest()
 
@@ -24,13 +25,18 @@ const MOCK_CACHE = new Cache({
 const MOCK_FORWARD = jest.fn().mockResolvedValue(MOCK_REQUEST)
 const MOCK_REPLY = jest.fn()
 
+const MOCK_CONFIG = new Configuration({
+  TARGET_URL: 'TARGET_URL'
+})
+
 const executeHandleRequest = async () =>
   handleRequest(
     MOCK_REQUEST,
     MOCK_MIDDLEWARE,
     MOCK_CACHE,
     MOCK_FORWARD,
-    MOCK_REPLY
+    MOCK_REPLY,
+    MOCK_CONFIG
   )
 
 describe('handleRequest', () => {
@@ -55,22 +61,6 @@ describe('handleRequest', () => {
   it('should use `middleware.shouldResponseBeCached`', async () => {
     await executeHandleRequest()
     expect(MOCK_SHOULD_RESPONSE_BE_CACHED).toHaveBeenCalledTimes(1)
-  })
-
-  it('should use `cache.get`', async () => {
-    await executeHandleRequest()
-    expect(MOCK_CACHE_GETTER).toHaveBeenCalledTimes(1)
-  })
-
-  it('should return the cached response if any', async () => {
-    const MOCK_CACHED_RESPONSE = new ProxyRequest()
-    MOCK_CACHE_GETTER.mockReturnValue(MOCK_CACHED_RESPONSE)
-    await executeHandleRequest()
-    expect(MOCK_REPLY).toHaveBeenCalledTimes(1)
-    expect(MOCK_REPLY).toHaveBeenCalledWith(MOCK_CACHED_RESPONSE)
-    expect(MOCK_FORWARD).not.toHaveBeenCalled()
-    expect(MOCK_SHOULD_RESPONSE_BE_CACHED).not.toHaveBeenCalled()
-    expect(MOCK_CACHE_SETTER).not.toHaveBeenCalled()
   })
 
   it('should not set the cache if `shouldResponseBeCached` returns false', async () => {

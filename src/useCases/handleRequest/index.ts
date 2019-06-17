@@ -1,7 +1,10 @@
 import ProxyRequest from '../../entities/ProxyRequest'
 import Middleware from '../../entities/Middleware'
 import Cache from '../../entities/Cache'
-import replyWithError from '../replyWithError'
+import Configuration, { PROXY_MODE } from '../../entities/Configuration'
+import NetworkOnly from '../networkOnly'
+import cachePreferred from '../cachePreferred'
+import cacheOnly from '../cacheOnly'
 
 export type Forward = (request: ProxyRequest) => Promise<ProxyRequest>
 export type Reply = (response: ProxyRequest) => void
@@ -11,34 +14,20 @@ export default async function handleRequest(
   middleware: Middleware,
   cache: Cache,
   forward: Forward,
-  reply: Reply
+  reply: Reply,
+  config: Configuration
 ): Promise<void> {
-  const requestKey = middleware.getRequestCacheKey(request)
-  const cachedResponse = cache.get(requestKey)
+  const mode = config.getMode()
 
-  if (cachedResponse) {
-    return reply(cachedResponse)
+  switch (mode) {
+    case PROXY_MODE.NETWORK_ONLY: {
+      return NetworkOnly(request, middleware, cache, forward, reply)
+    }
+    case PROXY_MODE.CACHE_PREFERRED: {
+      return cachePreferred(request, middleware, cache, forward, reply)
+    }
+    case PROXY_MODE.CACHE_ONLY: {
+      return cacheOnly(request, middleware, cache, forward, reply)
+    }
   }
-
-  let response = null
-  try {
-    response = await forward(request)
-  } catch (e) {
-    console.error('An error occurred while forwarding the request', e)
-    return replyWithError(reply, e)
-  }
-
-  if (middleware.shouldResponseBeCached(response)) {
-    cache.set(requestKey, response)
-  }
-
-  return reply(response)
 }
-
-/**
- * In here we should just perform a switch case to decide which usecase to run
- * We also should create a usecase for each "mode" of the proxy:
- * - cache only
- * - prioritize cache
- * - prioritize network
- */

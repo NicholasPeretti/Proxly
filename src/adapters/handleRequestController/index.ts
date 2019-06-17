@@ -25,18 +25,23 @@ export default function handleRequestController(
 
   const middleware = getMatchingMiddleware(proxyRequest, middlewares)
 
-  return handleRequest(proxyRequest, middleware, cache, forward, function reply(
-    req: ProxyRequest
-  ) {
-    const headers = req.getHeaders()
-    for (var header in headers) {
-      if (header === 'status') {
-        response.status(headers[header])
-      } else {
-        response.set(header, headers[header])
+  return handleRequest(
+    proxyRequest,
+    middleware,
+    cache,
+    forward,
+    function reply(req: ProxyRequest) {
+      const headers = req.getHeaders()
+      for (var header in headers) {
+        if (header === 'status') {
+          response.status(headers[header])
+        } else {
+          response.set(header, headers[header])
+        }
       }
-    }
 
-    return response.send(req.getBody()).end()
-  })
+      return response.send(req.getBody()).end()
+    },
+    config
+  )
 }
