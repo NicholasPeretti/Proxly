@@ -1,4 +1,4 @@
-export const enum PROXY_MODE {
+export enum PROXY_MODE {
   CACHE_ONLY = 'CACHE_ONLY',
   CACHE_PREFERRED = 'CACHE_PREFERRED',
   NETWORK_ONLY = 'NETWORK_ONLY'
@@ -31,7 +31,7 @@ export default class Configuration {
     return this.PORT
   }
 
-  getMode() {
+  getMode(): PROXY_MODE {
     return this.MODE
   }
 
