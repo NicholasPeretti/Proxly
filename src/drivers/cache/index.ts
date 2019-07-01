@@ -1,12 +1,16 @@
+import * as path from 'path'
+import * as lowdb from 'lowdb'
+import * as FileSync from 'lowdb/adapters/FileSync'
 import Cache from '../../entities/Cache'
 
-const store = {}
+const adapter = new FileSync(path.resolve(__dirname, '../../../.cache'))
+const db = new lowdb(adapter)
 
 export default new Cache({
   setter(key, value) {
-    store[key] = value
+    db.set(key, value).write()
   },
   getter(key) {
-    return store[key]
+    return db.get(key).value()
   }
 })
