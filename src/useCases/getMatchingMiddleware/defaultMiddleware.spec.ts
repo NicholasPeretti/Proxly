@@ -50,7 +50,7 @@ describe('defaultMiddleware', () => {
   })
 
   describe('getRequestCacheKey', () => {
-    it('should match the pattern: [METHOD]_URL', () => {
+    it('should match the pattern: METHOD_URL', () => {
       const URL = 'http://my-api.internal-domain.com'
       const METHOD = HTTP_METHOD.POST
       const req = new ProxyRequest({
@@ -58,9 +58,7 @@ describe('defaultMiddleware', () => {
         method: METHOD
       })
 
-      expect(defaultMiddleware.getRequestCacheKey(req)).toBe(
-        `[${METHOD}]_${URL}`
-      )
+      expect(defaultMiddleware.getRequestCacheKey(req)).toBe(`${METHOD}_${URL}`)
     })
   })
 })

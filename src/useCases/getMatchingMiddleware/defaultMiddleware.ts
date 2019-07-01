@@ -3,7 +3,7 @@ import Middleware from '../../entities/Middleware'
 export default new Middleware({
   matcher: () => true,
   getRequestCacheKey: request => {
-    return `[${request.getMethod()}]_${request.getUrl()}`
+    return `${request.getMethod()}_${request.getUrl()}`
   },
   shouldResponseBeCached: response => {
     const responseHeaders = response.getHeaders()
