@@ -23,13 +23,26 @@ class ProxyRequest {
   private target_body: string
   private target_headers: object
 
-  constructor(config?: {
-    url?: string
-    body?: string | object
-    headers?: object
-    method?: HTTP_METHOD
-  }) {
+  private fromString(stringifiedRequest: string): ProxyRequest {
+    const config = JSON.parse(stringifiedRequest)
+    return new ProxyRequest(config)
+  }
+
+  constructor(
+    config?:
+      | {
+          url?: string
+          body?: string | object
+          headers?: object
+          method?: HTTP_METHOD
+        }
+      | string
+  ) {
     config = config || {}
+
+    if (typeof config === 'string') {
+      return this.fromString(config)
+    }
 
     if (typeof config.body === 'string') {
       this.body = config.body
@@ -100,6 +113,15 @@ class ProxyRequest {
 
   setTargetHeaders(headers: object): void {
     this.target_headers = { ...headers }
+  }
+
+  toString(): string {
+    return JSON.stringify({
+      url: this.getUrl(),
+      body: this.getBody(),
+      headers: this.getHeaders(),
+      method: this.getMethod()
+    })
   }
 }
 

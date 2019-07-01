@@ -156,5 +156,49 @@ describe('ProxyRequest', () => {
         expect(req.getMethod()).toBe(method)
       })
     })
+    describe('toString', () => {
+      it('should return a stringified JSON with url, body, headers and method', () => {
+        const MOCK_URL = 'MOCK_URL'
+        const MOCK_METHOD = HTTP_METHOD.GET
+        const MOCK_HEADERS = {
+          a: 1
+        }
+        const MOCK_BODY = 'MOCK_BODY'
+        const MOCK_REQUEST = new ProxyRequest({
+          url: MOCK_URL,
+          body: MOCK_BODY,
+          headers: MOCK_HEADERS,
+          method: MOCK_METHOD
+        })
+        const expectedValue = JSON.stringify({
+          url: MOCK_URL,
+          body: MOCK_BODY,
+          headers: MOCK_HEADERS,
+          method: MOCK_METHOD
+        })
+
+        expect(MOCK_REQUEST.toString()).toEqual(expectedValue)
+      })
+    })
+    describe('Create Request from string', () => {
+      const MOCK_URL = 'MOCK_URL'
+      const MOCK_METHOD = HTTP_METHOD.GET
+      const MOCK_HEADERS = {
+        a: 1
+      }
+      const MOCK_BODY = 'MOCK_BODY'
+      const stringifiedRequest = JSON.stringify({
+        url: MOCK_URL,
+        body: MOCK_BODY,
+        headers: MOCK_HEADERS,
+        method: MOCK_METHOD
+      })
+      const request = new ProxyRequest(stringifiedRequest)
+
+      expect(request.getUrl()).toBe(MOCK_URL)
+      expect(request.getBody()).toBe(MOCK_BODY)
+      expect(request.getHeaders()).toEqual(MOCK_HEADERS)
+      expect(request.getMethod()).toBe(MOCK_METHOD)
+    })
   })
 })
